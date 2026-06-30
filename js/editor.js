@@ -3,6 +3,7 @@
 
 import { loadPdfLibDoc, pageRotations, buildPdf } from "./pdf-edit.js";
 import { getPdfLib } from "./pdf-handler.js";
+import { t, onLangChange } from "./i18n.js";
 
 const state = {
   sources: new Map(), // srcId -> { name, libDoc, pdfjsDoc }
@@ -41,6 +42,9 @@ export function initEditor() {
   els.extract.addEventListener("click", () => exportPdf(true));
   els.save.addEventListener("click", () => exportPdf(false));
   els.reset.addEventListener("click", resetEditor);
+
+  // Re-render localized card text when the UI language changes.
+  onLangChange(() => { if (state.pages.length) renderGrid(); });
 
   // Drag & drop files onto the edit dropzone.
   ["dragenter", "dragover"].forEach((ev) =>
@@ -83,7 +87,7 @@ async function addFiles(list) {
         });
       }
     } catch (e) {
-      alert(`"${f.name}"을(를) 열지 못했습니다: ${e.message || e}`);
+      alert(t("errFileOpen", { name: f.name, msg: e.message || e }));
     }
   }
   renderGrid();
@@ -115,16 +119,16 @@ function makeCard(p, idx) {
       <input type="checkbox" class="thumb-card__check" ${p.selected ? "checked" : ""} aria-label="선택" />
       ${p.thumb
         ? `<img class="thumb-card__img" src="${p.thumb}" alt="" />`
-        : `<span class="thumb-card__spinner">미리보기…</span>`}
+        : `<span class="thumb-card__spinner">${t("preview")}</span>`}
       ${p.rotation ? `<span class="thumb-card__badge">${p.rotation}°</span>` : ""}
     </div>
     <div class="thumb-card__foot">
       <span class="thumb-card__label" title="${p.label}">${idx + 1}. ${p.label}</span>
       <span class="thumb-card__btns">
-        <button class="mini-btn" data-act="left" title="앞으로">◀</button>
-        <button class="mini-btn" data-act="rot" title="회전">↻</button>
-        <button class="mini-btn" data-act="del" title="삭제">✕</button>
-        <button class="mini-btn" data-act="right" title="뒤로">▶</button>
+        <button class="mini-btn" data-act="left" title="${t("moveFwd")}">◀</button>
+        <button class="mini-btn" data-act="rot" title="${t("rotate")}">↻</button>
+        <button class="mini-btn" data-act="del" title="${t("del")}">✕</button>
+        <button class="mini-btn" data-act="right" title="${t("moveBack")}">▶</button>
       </span>
     </div>`;
 
@@ -221,8 +225,8 @@ function selectedPages() { return state.pages.filter((p) => p.selected); }
 
 function updateCount() {
   const sel = selectedPages().length;
-  els.count.textContent = `${sel} / ${state.pages.length} 선택`;
-  els.selectAll.textContent = sel === state.pages.length && sel > 0 ? "전체 해제" : "전체 선택";
+  els.count.textContent = t("countLabel", { sel, total: state.pages.length });
+  els.selectAll.textContent = sel === state.pages.length && sel > 0 ? t("deselectAll") : t("selectAll");
 }
 
 function toggleSelectAll() {
@@ -233,7 +237,7 @@ function toggleSelectAll() {
 
 function rotateSelected(delta) {
   const sel = selectedPages();
-  if (!sel.length) { hint("회전할 페이지를 먼저 선택하세요."); return; }
+  if (!sel.length) { hint(t("hintRotate")); return; }
   sel.forEach((p) => applyRotation(p, delta));
 }
 
@@ -254,7 +258,7 @@ function applyRotation(p, delta) {
       badge.textContent = p.rotation + "°";
     } else if (badge) badge.remove();
     if (!wrap.querySelector(".thumb-card__spinner")) {
-      const s = document.createElement("span"); s.className = "thumb-card__spinner"; s.textContent = "미리보기…"; wrap.appendChild(s);
+      const s = document.createElement("span"); s.className = "thumb-card__spinner"; s.textContent = t("preview"); wrap.appendChild(s);
     }
   }
   makeThumb(p);
@@ -262,8 +266,8 @@ function applyRotation(p, delta) {
 
 function deleteSelected() {
   const sel = selectedPages();
-  if (!sel.length) { hint("삭제할 페이지를 먼저 선택하세요."); return; }
-  if (!confirm(`선택한 ${sel.length}개 페이지를 삭제할까요?`)) return;
+  if (!sel.length) { hint(t("hintDelete")); return; }
+  if (!confirm(t("confirmDelete", { n: sel.length }))) return;
   state.pages = state.pages.filter((p) => !p.selected);
   afterMutate();
 }
@@ -296,16 +300,16 @@ function reorder(fromUid, toUid) {
 
 async function exportPdf(selectedOnly) {
   const pages = selectedOnly ? selectedPages() : state.pages;
-  if (!pages.length) { hint(selectedOnly ? "추출할 페이지를 선택하세요." : "저장할 페이지가 없습니다."); return; }
+  if (!pages.length) { hint(selectedOnly ? t("hintExtract") : t("hintSave")); return; }
   const btn = selectedOnly ? els.extract : els.save;
   const old = btn.textContent;
-  btn.disabled = true; btn.textContent = "처리 중…";
+  btn.disabled = true; btn.textContent = t("processing");
   try {
     const bytes = await buildPdf(pages, new Map([...state.sources].map(([k, v]) => [k, v.libDoc])));
     const base = state.sources.size ? [...state.sources.values()][0].name.replace(/\.pdf$/i, "") : "document";
     download(bytes, `${base}_${selectedOnly ? "추출" : "편집"}.pdf`);
   } catch (e) {
-    alert("PDF 생성 실패: " + (e.message || e));
+    alert(t("errBuild", { msg: e.message || e }));
   } finally {
     btn.disabled = false; btn.textContent = old;
   }

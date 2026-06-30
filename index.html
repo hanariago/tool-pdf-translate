@@ -3,8 +3,83 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>PDF 번역 · 원문 위치 그대로</title>
-  <meta name="description" content="브라우저에서 PDF를 열어 원문 위치 그대로 번역을 표시합니다. 서버 전송 없음." />
+
+  <!-- Primary SEO -->
+  <title>PDF 번역·편집 - 원문 위치 그대로 번역하는 브라우저 PDF 도구</title>
+  <meta name="description" content="PDF를 브라우저에서 열어 원문 위치 그대로 번역. 스캔본 OCR, 합치기·분할·회전·삭제 편집까지. 설치·서버 전송 없이 무료." />
+  <meta name="keywords" content="PDF 번역, PDF 번역기, PDF 원문 번역, 스캔 PDF 번역, PDF OCR, PDF 합치기, PDF 분할, PDF 회전, PDF 편집, PDF translate, translate PDF in browser, PDF merge split rotate, PDF OCR translate" />
+  <meta name="author" content="Lena" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#3D6B5E" />
+  <link rel="canonical" href="https://hanariago.github.io/tool-pdf-translate/" />
+
+  <!-- hreflang (직접 번역한 언어만: ko/en) -->
+  <link rel="alternate" hreflang="ko" href="https://hanariago.github.io/tool-pdf-translate/?lang=ko" />
+  <link rel="alternate" hreflang="en" href="https://hanariago.github.io/tool-pdf-translate/?lang=en" />
+  <link rel="alternate" hreflang="x-default" href="https://hanariago.github.io/tool-pdf-translate/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="PDF 번역·편집 - 원문 위치 그대로 번역하는 브라우저 PDF 도구" />
+  <meta property="og:description" content="PDF를 브라우저에서 열어 원문 위치 그대로 번역. 스캔본 OCR, 합치기·분할·회전·삭제 편집까지. 설치·서버 전송 없이 무료." />
+  <meta property="og:url" content="https://hanariago.github.io/tool-pdf-translate/" />
+  <meta property="og:site_name" content="PDF 번역·편집" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="PDF 번역·편집 - 원문 위치 그대로 번역하는 브라우저 PDF 도구" />
+  <meta name="twitter:description" content="PDF를 브라우저에서 열어 원문 위치 그대로 번역. 스캔본 OCR + 합치기·분할·회전·삭제 편집. 무료." />
+  <meta name="twitter:creator" content="@thezenvoid" />
+
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%233D6B5E'/%3E%3Ctext x='50' y='66' font-size='30' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EPDF%3C/text%3E%3C/svg%3E" />
+
+  <!-- 구조화 데이터: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PDF 번역·편집 (PDF Translate & Edit)",
+    "alternateName": ["PDF 번역", "PDF Translate", "PDF Editor"],
+    "url": "https://hanariago.github.io/tool-pdf-translate/",
+    "description": "PDF를 브라우저에서 열어 원문 위치 그대로 번역하고, 스캔본은 OCR로 인식하며, 여러 PDF 합치기·분할·회전·삭제 편집까지 지원하는 무료 온라인 도구. 데이터는 서버로 전송되지 않고 브라우저에서만 처리됩니다.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any (web browser)",
+    "browserRequirements": "Requires JavaScript",
+    "inLanguage": ["ko", "en"],
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "featureList": [
+      "원문 위치 그대로 PDF 번역 (pdf.js 좌표 추출)",
+      "스캔본 PDF OCR (Tesseract.js)",
+      "원문 / 번역 보기 토글",
+      "페이지 PNG 다운로드",
+      "여러 PDF 합치기 / 페이지 추출·분할",
+      "페이지 회전·삭제·순서 변경 (pdf-lib)",
+      "LLM 보정 번역 (Claude / OpenAI, 사용자 키)"
+    ],
+    "author": { "@type": "Person", "name": "Lena", "url": "https://x.com/thezenvoid" },
+    "license": "https://opensource.org/licenses/MIT"
+  }
+  </script>
+
+  <!-- 구조화 데이터: FAQPage (페이지에 보이는 FAQ와 동일) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "PDF 파일이 서버로 전송되나요?", "acceptedAnswer": { "@type": "Answer", "text": "아니요. PDF·텍스트·이미지는 모두 브라우저 안에서만 처리됩니다. LLM 보정을 켠 경우에만, 사용자가 직접 입력한 API 키로 해당 제공자에게 번역 텍스트가 전송됩니다." } },
+      { "@type": "Question", "name": "모바일에서도 번역이 되나요?", "acceptedAnswer": { "@type": "Answer", "text": "Chrome 내장 번역 API는 데스크톱 Chrome·Edge 138 이상 전용입니다. 모바일에서는 설정에서 본인 API 키(Claude 또는 OpenAI)를 입력하면 번역할 수 있고, 키가 없어도 텍스트 추출과 OCR은 동작합니다." } },
+      { "@type": "Question", "name": "스캔한 PDF(이미지)도 번역할 수 있나요?", "acceptedAnswer": { "@type": "Answer", "text": "네. 텍스트 레이어가 없는 스캔본은 자동으로 감지해 Tesseract.js OCR로 글자를 인식한 뒤 번역합니다. 다만 OCR은 100% 정확하지 않으니 결과 확인이 필요합니다." } },
+      { "@type": "Question", "name": "여러 PDF를 하나로 합치거나 페이지를 나눌 수 있나요?", "acceptedAnswer": { "@type": "Answer", "text": "‘편집’ 탭에서 여러 PDF를 올려 순서를 바꿔 합치거나, 원하는 페이지만 골라 추출(분할)하고, 90도 회전·삭제까지 할 수 있습니다. 결과는 새 PDF로 저장됩니다." } },
+      { "@type": "Question", "name": "무료인가요?", "acceptedAnswer": { "@type": "Answer", "text": "네, 무료입니다. Chrome 내장 번역과 OCR·편집 기능은 비용이 없고, 선택적인 LLM 보정만 사용자 본인 API 키의 사용량에 따라 과금됩니다." } },
+      { "@type": "Question", "name": "API 키는 안전하게 저장되나요?", "acceptedAnswer": { "@type": "Answer", "text": "API 키는 이 브라우저의 localStorage에만 저장되며 외부로 전송되지 않습니다. 번역 요청 시에만 사용자 키로 해당 제공자에 직접 호출됩니다. 설정에서 언제든 삭제할 수 있습니다." } }
+    ]
+  }
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,17 +94,24 @@
     <div class="appbar__brand">
       <span class="appbar__logo" aria-hidden="true">📄</span>
       <div class="appbar__titles">
-        <h1 class="appbar__title">PDF 번역</h1>
-        <p class="appbar__sub">원문 위치 그대로 · 서버 전송 없음</p>
+        <h1 class="appbar__title" data-i18n="appTitle">PDF 번역</h1>
+        <p class="appbar__sub" data-i18n="appSub">원문 위치 그대로 · 서버 전송 없음</p>
       </div>
     </div>
-    <button id="btn-settings" class="iconbtn" title="설정" aria-label="설정">⚙️</button>
+    <div class="appbar__actions">
+      <select id="lang-select" class="lang-select" aria-label="Language">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+      <button id="btn-guide" class="iconbtn" data-i18n-title="guideOpen" title="이용 안내" aria-label="이용 안내">❔</button>
+      <button id="btn-settings" class="iconbtn" data-i18n-title="settings" title="설정" aria-label="설정">⚙️</button>
+    </div>
   </header>
 
   <!-- ===== Mode tabs ===== -->
   <div class="tabbar" role="tablist">
-    <button id="tab-translate" class="tab is-active" role="tab" aria-selected="true">📖 번역</button>
-    <button id="tab-edit" class="tab" role="tab" aria-selected="false">✂️ 편집</button>
+    <button id="tab-translate" class="tab is-active" role="tab" aria-selected="true" data-i18n="tabTranslate">📖 번역</button>
+    <button id="tab-edit" class="tab" role="tab" aria-selected="false" data-i18n="tabEdit">✂️ 편집</button>
   </div>
 
   <!-- ===== Browser support / status banners ===== -->
@@ -40,20 +122,20 @@
   <!-- ===== Toolbar ===== -->
   <nav id="toolbar" class="toolbar" hidden>
     <div class="toolbar__group">
-      <button id="btn-prev" class="iconbtn" title="이전 페이지" aria-label="이전 페이지">◀</button>
+      <button id="btn-prev" class="iconbtn" data-i18n-title="prevPage" title="이전 페이지" aria-label="이전 페이지">◀</button>
       <span id="page-indicator" class="page-indicator">- / -</span>
-      <button id="btn-next" class="iconbtn" title="다음 페이지" aria-label="다음 페이지">▶</button>
+      <button id="btn-next" class="iconbtn" data-i18n-title="nextPage" title="다음 페이지" aria-label="다음 페이지">▶</button>
     </div>
 
     <div class="toolbar__group seg" role="group" aria-label="보기 모드">
-      <button id="view-original" class="seg__btn is-active" data-mode="original">원문</button>
-      <button id="view-translated" class="seg__btn" data-mode="translated">번역</button>
+      <button id="view-original" class="seg__btn is-active" data-mode="original" data-i18n="viewOriginal">원문</button>
+      <button id="view-translated" class="seg__btn" data-mode="translated" data-i18n="viewTranslated">번역</button>
     </div>
 
     <div class="toolbar__group">
-      <button id="btn-translate" class="btn btn--primary">번역하기</button>
-      <button id="btn-download" class="iconbtn" title="현재 페이지 PNG 저장" aria-label="PNG 저장">⬇️</button>
-      <button id="btn-new" class="iconbtn" title="새 PDF 열기" aria-label="새 PDF 열기">🗂️</button>
+      <button id="btn-translate" class="btn btn--primary" data-i18n="translateBtn">번역하기</button>
+      <button id="btn-download" class="iconbtn" data-i18n-title="downloadPng" title="현재 페이지 PNG 저장" aria-label="PNG 저장">⬇️</button>
+      <button id="btn-new" class="iconbtn" data-i18n-title="newPdf" title="새 PDF 열기" aria-label="새 PDF 열기">🗂️</button>
     </div>
   </nav>
 
@@ -69,10 +151,10 @@
     <section id="dropzone" class="dropzone">
       <div class="dropzone__inner">
         <div class="dropzone__icon" aria-hidden="true">📥</div>
-        <p class="dropzone__title">PDF를 끌어다 놓거나 선택하세요</p>
-        <p class="dropzone__hint">파일은 브라우저 안에서만 처리됩니다. 서버로 전송되지 않습니다.</p>
+        <p class="dropzone__title" data-i18n="dropTitle">PDF를 끌어다 놓거나 선택하세요</p>
+        <p class="dropzone__hint" data-i18n="dropHint">파일은 브라우저 안에서만 처리됩니다. 서버로 전송되지 않습니다.</p>
         <label class="btn btn--primary">
-          PDF 선택
+          <span data-i18n="choosePdf">PDF 선택</span>
           <input id="file-input" type="file" accept="application/pdf,.pdf" hidden />
         </label>
       </div>
@@ -94,10 +176,10 @@
     <section id="edit-drop" class="dropzone">
       <div class="dropzone__inner">
         <div class="dropzone__icon" aria-hidden="true">✂️</div>
-        <p class="dropzone__title">편집할 PDF를 끌어다 놓거나 선택하세요</p>
-        <p class="dropzone__hint">여러 개를 올리면 합칠 수 있어요. 모든 작업은 브라우저 안에서 처리됩니다.</p>
+        <p class="dropzone__title" data-i18n="editDropTitle">편집할 PDF를 끌어다 놓거나 선택하세요</p>
+        <p class="dropzone__hint" data-i18n="editDropHint">여러 개를 올리면 합칠 수 있어요. 모든 작업은 브라우저 안에서 처리됩니다.</p>
         <label class="btn btn--primary">
-          PDF 선택 (여러 개 가능)
+          <span data-i18n="choosePdfMulti">PDF 선택 (여러 개 가능)</span>
           <input id="edit-file-input" type="file" accept="application/pdf,.pdf" multiple hidden />
         </label>
       </div>
@@ -107,22 +189,22 @@
     <div id="edit-workspace" hidden>
       <div class="edit-toolbar">
         <div class="edit-toolbar__group">
-          <button id="edit-select-all" class="btn btn--ghost">전체 선택</button>
-          <span id="edit-count" class="edit-count">0 / 0 선택</span>
+          <button id="edit-select-all" class="btn btn--ghost" data-i18n="selectAll">전체 선택</button>
+          <span id="edit-count" class="edit-count">0 / 0</span>
         </div>
         <div class="edit-toolbar__group">
-          <button id="edit-rotate-l" class="iconbtn" title="선택 페이지 왼쪽 회전" aria-label="왼쪽 회전">↺</button>
-          <button id="edit-rotate-r" class="iconbtn" title="선택 페이지 오른쪽 회전" aria-label="오른쪽 회전">↻</button>
-          <button id="edit-delete" class="iconbtn" title="선택 페이지 삭제" aria-label="삭제">🗑️</button>
+          <button id="edit-rotate-l" class="iconbtn" data-i18n-title="rotateLeft" title="선택 페이지 왼쪽 회전" aria-label="왼쪽 회전">↺</button>
+          <button id="edit-rotate-r" class="iconbtn" data-i18n-title="rotateRight" title="선택 페이지 오른쪽 회전" aria-label="오른쪽 회전">↻</button>
+          <button id="edit-delete" class="iconbtn" data-i18n-title="deleteSel" title="선택 페이지 삭제" aria-label="삭제">🗑️</button>
         </div>
         <div class="edit-toolbar__group">
-          <button id="edit-add" class="btn btn--ghost">＋ 파일 추가</button>
-          <button id="edit-extract" class="btn">선택 추출</button>
-          <button id="edit-save" class="btn btn--primary">합쳐서 저장</button>
-          <button id="edit-reset" class="iconbtn" title="초기화" aria-label="초기화">🗂️</button>
+          <button id="edit-add" class="btn btn--ghost" data-i18n="addFiles">＋ 파일 추가</button>
+          <button id="edit-extract" class="btn" data-i18n="extractSel">선택 추출</button>
+          <button id="edit-save" class="btn btn--primary" data-i18n="mergeSave">합쳐서 저장</button>
+          <button id="edit-reset" class="iconbtn" data-i18n-title="reset" title="초기화" aria-label="초기화">🗂️</button>
         </div>
       </div>
-      <p class="edit-hint">썸네일을 드래그해 순서를 바꾸거나, 카드의 ◀▶ 버튼으로 이동하세요. 체크박스로 여러 장을 골라 회전·삭제·추출할 수 있습니다.</p>
+      <p class="edit-hint" data-i18n="editHint">썸네일을 드래그해 순서를 바꾸거나, 카드의 ◀▶ 버튼으로 이동하세요. 체크박스로 여러 장을 골라 회전·삭제·추출할 수 있습니다.</p>
       <div id="edit-grid" class="thumb-grid"></div>
     </div>
   </section>
@@ -131,77 +213,102 @@
   <div id="settings-backdrop" class="backdrop" hidden></div>
   <aside id="settings" class="drawer" hidden aria-label="설정">
     <div class="drawer__head">
-      <h2 class="drawer__title">설정</h2>
-      <button id="btn-settings-close" class="iconbtn" aria-label="닫기">✕</button>
+      <h2 class="drawer__title" data-i18n="settings">설정</h2>
+      <button id="btn-settings-close" class="iconbtn" data-i18n-title="close" aria-label="닫기">✕</button>
     </div>
 
     <div class="drawer__body">
       <!-- Languages -->
       <fieldset class="field">
-        <legend class="field__legend">언어</legend>
+        <legend class="field__legend" data-i18n="legendLang">언어</legend>
         <label class="field__row">
-          <span>원문 언어</span>
+          <span data-i18n="srcLangLabel">원문 언어</span>
           <select id="src-lang"></select>
         </label>
         <label class="field__row">
-          <span>번역 언어</span>
+          <span data-i18n="tgtLangLabel">번역 언어</span>
           <select id="tgt-lang"></select>
         </label>
       </fieldset>
 
       <!-- OCR -->
       <fieldset class="field">
-        <legend class="field__legend">스캔본 OCR</legend>
+        <legend class="field__legend" data-i18n="legendOcr">스캔본 OCR</legend>
         <label class="field__row">
-          <span>OCR 인식 언어</span>
+          <span data-i18n="ocrLangLabel">OCR 인식 언어</span>
           <select id="ocr-lang"></select>
         </label>
         <label class="field__row field__row--check">
           <input id="ocr-auto" type="checkbox" checked />
-          <span>스캔본 감지 시 자동 OCR</span>
+          <span data-i18n="ocrAutoLabel">스캔본 감지 시 자동 OCR</span>
         </label>
-        <p class="field__note">OCR은 이미지에서 글자를 추정하는 방식이라 100% 정확하지 않습니다. 표·작은 글씨·노이즈가 많은 스캔본은 오인식이 생길 수 있습니다.</p>
+        <p class="field__note" data-i18n="ocrNote">OCR은 이미지에서 글자를 추정하는 방식이라 100% 정확하지 않습니다. 표·작은 글씨·노이즈가 많은 스캔본은 오인식이 생길 수 있습니다.</p>
       </fieldset>
 
       <!-- LLM -->
       <fieldset class="field">
-        <legend class="field__legend">LLM 보정 번역 (선택)</legend>
+        <legend class="field__legend" data-i18n="legendLlm">LLM 보정 번역 (선택)</legend>
         <label class="field__row">
-          <span>제공자</span>
+          <span data-i18n="providerLabel">제공자</span>
           <select id="llm-provider">
-            <option value="none">사용 안 함 (Chrome 내장 번역)</option>
+            <option value="none" data-i18n="providerNone">사용 안 함 (Chrome 내장 번역)</option>
             <option value="claude">Claude API (Anthropic)</option>
             <option value="openai">OpenAI API</option>
           </select>
         </label>
         <label class="field__row field__row--stack" data-llm-only hidden>
-          <span>API 키</span>
-          <input id="llm-key" type="password" placeholder="sk-... / 본인 API 키" autocomplete="off" />
+          <span data-i18n="apiKeyLabel">API 키</span>
+          <input id="llm-key" type="password" data-i18n-ph="apiKeyPh" placeholder="sk-... / 본인 API 키" autocomplete="off" />
         </label>
         <label class="field__row field__row--stack" data-llm-only hidden>
-          <span>모델</span>
-          <input id="llm-model" type="text" placeholder="모델명" />
+          <span data-i18n="modelLabel">모델</span>
+          <input id="llm-model" type="text" data-i18n-ph="modelPh" placeholder="모델명" />
         </label>
         <label class="field__row field__row--check" data-llm-only hidden>
           <input id="llm-correct" type="checkbox" checked />
-          <span>OCR 결과 문맥 보정</span>
+          <span data-i18n="llmCorrectLabel">OCR 결과 문맥 보정</span>
         </label>
-        <p class="field__note">API 키는 이 브라우저(localStorage)에만 저장되며 외부로 전송되지 않습니다. 번역 요청은 사용자가 입력한 키로 해당 제공자에게 직접 호출됩니다.</p>
-        <button id="btn-clear-key" class="btn btn--ghost" data-llm-only hidden>저장된 키 삭제</button>
+        <p class="field__note" data-i18n="llmNote">API 키는 이 브라우저(localStorage)에만 저장되며 외부로 전송되지 않습니다. 번역 요청은 사용자가 입력한 키로 해당 제공자에게 직접 호출됩니다.</p>
+        <button id="btn-clear-key" class="btn btn--ghost" data-llm-only hidden data-i18n="clearKey">저장된 키 삭제</button>
       </fieldset>
     </div>
   </aside>
 
+  <!-- ===== SEO content (visible) ===== -->
+  <section class="seo-content">
+    <p id="seo-intro" class="seo-intro"></p>
+    <h2 id="seo-faq-title" class="seo-faq-title"></h2>
+    <div id="seo-faq-list" class="seo-faq-list"></div>
+  </section>
+
   <!-- ===== Footer ===== -->
   <footer class="appfoot">
-    <span>오픈소스 · MIT 라이선스</span>
+    <span data-i18n="footerLicense">오픈소스 · MIT 라이선스</span>
     <span class="appfoot__sep">·</span>
     <a href="https://github.com/hanariago/tool-pdf-translate" target="_blank" rel="noopener">GitHub</a>
     <span class="appfoot__sep">·</span>
-    <span>Made by <a href="https://x.com/thezenvoid" target="_blank" rel="noopener">Lena</a></span>
+    <span><span data-i18n="footerMadeBy">Made by</span> <a href="https://x.com/thezenvoid" target="_blank" rel="noopener">Lena</a></span>
     <span class="appfoot__sep">·</span>
-    <a href="https://hanariago.github.io/tools-hub/" target="_blank" rel="noopener">🔧 다른 도구 모음 →</a>
+    <a href="https://hanariago.github.io/tools-hub/" target="_blank" rel="noopener" data-i18n="footerHub">🔧 다른 도구 모음 →</a>
   </footer>
+
+  <!-- ===== Guide / onboarding modal ===== -->
+  <div id="guide-overlay" class="guide-overlay" hidden>
+    <div class="guide-modal" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+      <button id="guide-x" class="guide-x" data-i18n-title="close" aria-label="닫기">✕</button>
+      <h2 id="guide-title" class="guide-title" data-i18n="guideTitle">PDF 번역·편집에 오신 걸 환영해요</h2>
+      <p class="guide-lead" data-i18n="guideLead">이 도구로 할 수 있는 일이에요. 모든 처리는 브라우저 안에서만 일어나고, 파일은 서버로 올라가지 않습니다.</p>
+      <ul id="guide-list" class="guide-list"></ul>
+      <p class="guide-note" id="guide-note" data-i18n="guideNote">Chrome 내장 번역은 데스크톱 Chrome/Edge 138+ 전용이에요. 모바일·기타 브라우저는 설정에서 본인 API 키를 넣으면 번역할 수 있어요.</p>
+      <div class="guide-foot">
+        <label class="guide-dontshow">
+          <input type="checkbox" id="guide-dontshow" />
+          <span data-i18n="guideDontShow">오늘 다시 보지 않기</span>
+        </label>
+        <button id="guide-close" class="btn btn--primary" data-i18n="guideClose">닫기</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ===== Scripts ===== -->
   <!-- Tesseract (UMD global) -->

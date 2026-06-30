@@ -83,11 +83,12 @@ export async function buildEngine(settings, env, sampleText) {
   return { kind: "none", ready: false, reason: reasonFor(env, src, tgt) };
 }
 
+// Returns an i18n key; the caller localizes it.
 function reasonFor(env, src, tgt) {
-  if (src === tgt) return "원문 언어와 번역 언어가 같습니다.";
-  if (env.isMobile) return "모바일에서는 Chrome 내장 번역을 쓸 수 없습니다. 설정에서 API 키를 입력하면 번역할 수 있습니다.";
-  if (!env.hasTranslator) return "이 브라우저는 내장 번역(Translator API)을 지원하지 않습니다. 데스크톱 Chrome/Edge를 쓰거나 설정에서 API 키를 입력하세요.";
-  return "현재 언어쌍으로 번역할 수 없습니다.";
+  if (src === tgt) return "reasonSameLang";
+  if (env.isMobile) return "reasonMobile";
+  if (!env.hasTranslator) return "reasonNoTranslator";
+  return "reasonPair";
 }
 
 async function makeChromeEngine(src, tgt) {

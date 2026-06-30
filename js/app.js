@@ -9,6 +9,8 @@ import { ocrCanvas } from "./ocr.js";
 import { renderOverlay, clearOverlay } from "./overlay.js";
 import { buildEngine, detectEnvironment } from "./translator.js";
 import { initEditor } from "./editor.js";
+import { t, applyLang, initLang, onLangChange } from "./i18n.js";
+import { initGuide } from "./guide.js";
 
 // ---------- State ----------
 const state = {
@@ -118,14 +120,16 @@ function banner(kind, html, id) {
 
 function showEnvBanners() {
   if (env.isMobile) {
-    banner("info",
-      "📱 모바일 환경입니다. Chrome 내장 번역은 데스크톱 전용이라, 모바일에서 번역하려면 설정에서 본인 API 키(Claude/OpenAI)를 입력하세요. 키 없이도 텍스트 추출·OCR은 동작합니다.",
-      "b-mobile");
+    banner("info", t("bMobile"), "b-mobile");
   } else if (!env.hasTranslator) {
-    banner("warn",
-      "이 브라우저는 내장 번역(Translator API)을 지원하지 않습니다. 데스크톱 <b>Chrome / Edge 138+</b>에서 무료 번역이 동작하며, 그 외에는 설정에서 API 키를 입력하면 번역할 수 있습니다. 텍스트 추출·OCR은 어디서나 동작합니다.",
-      "b-nosupport");
+    banner("warn", t("bNoSupport"), "b-nosupport");
   }
+}
+
+// Re-render the persistent env banners when the language changes.
+function refreshEnvBanners() {
+  ["b-mobile", "b-nosupport"].forEach((id) => document.getElementById(id)?.remove());
+  showEnvBanners();
 }
 
 // ---------- Progress ----------
@@ -140,12 +144,12 @@ function hideProgress() { els.progress.hidden = true; }
 async function handleFile(file) {
   if (!file) return;
   if (file.type && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-    banner("warn", "PDF 파일만 열 수 있습니다.");
+    banner("warn", t("errOnlyPdf"));
     return;
   }
   state.baseName = file.name.replace(/\.pdf$/i, "") || "page";
   try {
-    setProgress("PDF 여는 중…", 0.1);
+    setProgress(t("openingPdf"), 0.1);
     const buf = await file.arrayBuffer();
     state.pdfDoc = await loadDocument(buf);
     state.numPages = state.pdfDoc.numPages;
@@ -161,7 +165,7 @@ async function handleFile(file) {
   } catch (e) {
     console.error(e);
     hideProgress();
-    banner("warn", "PDF를 여는 중 오류가 발생했습니다: " + (e.message || e));
+    banner("warn", t("errOpen", { msg: e.message || e }));
   }
 }
 
@@ -204,21 +208,19 @@ async function buildPageData(page, info) {
 
   if (isScanned && settings.ocrAuto) {
     try {
-      setProgress("스캔본 감지 — OCR 처리 중…", 0.05);
+      setProgress(t("ocrDetecting"), 0.05);
       raw = await ocrCanvas(els.canvas, settings.ocrLang, info.dpr, (status, p) => {
-        setProgress(`OCR (${status})…`, p);
+        setProgress(t("ocrStatus", { status }), p);
       });
       hideProgress();
-      banner("warn",
-        "🔍 스캔본으로 감지되어 OCR로 글자를 추정했습니다. OCR은 100% 정확하지 않으니 결과를 검토하세요.",
-        "b-ocr");
+      banner("warn", t("bOcrDone"), "b-ocr");
     } catch (e) {
       hideProgress();
-      banner("warn", "OCR 처리 실패: " + (e.message || e));
+      banner("warn", t("bOcrFail", { msg: e.message || e }));
       raw = [];
     }
   } else if (isScanned) {
-    banner("info", "스캔본으로 보입니다. 설정에서 ‘자동 OCR’을 켜면 글자를 추정해 번역할 수 있습니다.", "b-scan");
+    banner("info", t("bScan"), "b-scan");
   }
 
   const W = info.cssWidth, H = info.cssHeight;
@@ -263,12 +265,13 @@ async function translatePage(n) {
   try {
     engine = await buildEngine(settings, env, sample);
   } catch (e) {
-    banner("warn", "번역 엔진 초기화 실패: " + (e.message || e));
+    banner("warn", t("errEngineInit", { msg: e.message || e }));
     return;
   }
 
   if (!engine.ready) {
-    banner("warn", "번역할 수 없습니다 — " + (engine.reason || "사용 가능한 번역 수단이 없습니다."));
+    const reason = engine.reason ? t(engine.reason) : t("noEngine");
+    banner("warn", t("errCantTranslate", { reason }));
     return;
   }
 
@@ -276,12 +279,12 @@ async function translatePage(n) {
   els.btnTranslate.disabled = true;
   try {
     const texts = pending.map((b) => b.text);
-    const engineName = engine.kind === "chrome" ? "Chrome 내장 번역"
-      : engine.kind === "llm" ? `${engine.provider === "openai" ? "OpenAI" : "Claude"} API` : "";
-    setProgress(`번역 중 (${engineName})…`, 0.02);
+    const engineName = engine.kind === "chrome" ? t("engineChrome")
+      : engine.kind === "llm" ? (engine.provider === "openai" ? t("engineOpenAI") : t("engineClaude")) : "";
+    setProgress(t("progTranslating", { engine: engineName }), 0.02);
     const out = await engine.translate(texts, (type, ratio) => {
-      if (type === "model") setProgress("번역 모델 다운로드 중…", ratio);
-      else setProgress(`번역 중 (${engineName})…`, ratio);
+      if (type === "model") setProgress(t("progModelDownload"), ratio);
+      else setProgress(t("progTranslating", { engine: engineName }), ratio);
     });
     pending.forEach((b, i) => { b.translated = out[i] || b.text; });
     pdata.translatedDone = true;
@@ -289,7 +292,7 @@ async function translatePage(n) {
   } catch (e) {
     console.error(e);
     hideProgress();
-    banner("warn", "번역 오류: " + (e.message || e));
+    banner("warn", t("errTranslate", { msg: e.message || e }));
   } finally {
     state.busy = false;
     els.btnTranslate.disabled = false;
@@ -455,8 +458,11 @@ function wire() {
   els.llmCorrect.addEventListener("change", (e) => { settings.llmCorrect = e.target.checked; saveSettings(); });
   els.btnClearKey.addEventListener("click", () => {
     settings.llmKey = ""; els.llmKey.value = ""; saveSettings();
-    banner("info", "저장된 API 키를 삭제했습니다.");
+    banner("info", t("keyDeleted"));
   });
+
+  // UI language
+  document.getElementById("lang-select").addEventListener("change", (e) => applyLang(e.target.value));
 
   // responsive re-render (debounced)
   let rt = null;
@@ -478,6 +484,8 @@ function invalidateTranslations() {
 
 // ---------- Init ----------
 syncSettingsUI();
-showEnvBanners();
 wire();
 initEditor();
+onLangChange(refreshEnvBanners);
+initLang();      // applies language to all [data-i18n]; shows env banners via subscriber
+initGuide();

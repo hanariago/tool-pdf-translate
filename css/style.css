@@ -52,6 +52,17 @@ button, input, select { font-family: inherit; }
 .appbar__title { font-size: 18px; font-weight: 700; margin: 0; }
 .appbar__sub { font-size: 12px; color: var(--text-sub); margin: 0; }
 
+.appbar__actions { display: flex; align-items: center; gap: 8px; }
+.lang-select {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* ===== Buttons ===== */
 .btn {
   display: inline-flex;
@@ -339,6 +350,84 @@ button, input, select { font-family: inherit; }
 .field__row--stack select, .field__row--stack input { width: 100%; }
 .field__row > select { flex: 1; max-width: 200px; }
 .field__note { font-size: 12px; color: var(--text-sub); margin: 8px 0 0; line-height: 1.45; }
+
+/* ===== SEO content (intro + FAQ) ===== */
+.seo-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 8px 18px 40px;
+}
+.seo-intro { font-size: 14px; color: var(--text-sub); line-height: 1.7; margin: 0 0 28px; }
+.seo-faq-title { font-size: 18px; font-weight: 700; color: var(--text); margin: 0 0 14px; }
+.seo-faq-list details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.seo-faq-list summary {
+  cursor: pointer;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  list-style: none;
+}
+.seo-faq-list summary::-webkit-details-marker { display: none; }
+.seo-faq-list summary::after { content: "+"; float: right; color: var(--point); font-weight: 700; }
+.seo-faq-list details[open] summary::after { content: "–"; }
+.seo-faq-list .faq-a { padding: 0 16px 14px; font-size: 13.5px; color: var(--text-sub); line-height: 1.65; }
+
+/* ===== Guide / onboarding modal ===== */
+.guide-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(20, 28, 24, 0.46);
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+}
+.guide-modal {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(40, 52, 47, 0.28);
+  padding: 26px 24px 18px;
+  animation: guidePop .18s ease;
+}
+@keyframes guidePop { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.guide-x {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  border: none; background: transparent; border-radius: 8px;
+  font-size: 17px; color: var(--text-sub); cursor: pointer;
+}
+.guide-x:hover { background: var(--point-soft); color: var(--point-dark); }
+.guide-title { font-size: 19px; font-weight: 700; margin: 0 28px 8px 0; color: var(--text); }
+.guide-lead { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; margin: 0 0 16px; }
+.guide-list { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.guide-list li {
+  font-size: 13.5px; line-height: 1.55; color: var(--text);
+  background: var(--bg); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 11px 13px;
+}
+.guide-list b { color: var(--point-dark); }
+.guide-note {
+  font-size: 12.5px; color: var(--warn-text); background: var(--warn-bg);
+  border-radius: var(--radius-sm); padding: 10px 12px; margin: 0 0 18px; line-height: 1.55;
+}
+.guide-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.guide-dontshow { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-sub); cursor: pointer; }
+.guide-dontshow input { width: 16px; height: 16px; accent-color: var(--point); cursor: pointer; }
+
+@media (max-width: 480px) {
+  .guide-modal { padding: 22px 18px 16px; }
+  .guide-foot { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  .guide-foot .btn { width: 100%; }
+  .guide-dontshow { justify-content: center; }
+}
 
 /* ===== Footer ===== */
 .appfoot {
