@@ -8,6 +8,7 @@ import { loadDocument, renderPage, extractTextBlocks } from "./pdf-handler.js";
 import { ocrCanvas } from "./ocr.js";
 import { renderOverlay, clearOverlay } from "./overlay.js";
 import { buildEngine, detectEnvironment } from "./translator.js";
+import { initEditor } from "./editor.js";
 
 // ---------- State ----------
 const state = {
@@ -380,11 +381,16 @@ function wire() {
   // file input
   els.fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
 
-  // drag & drop
+  // drag & drop (translate mode only — edit mode has its own dropzone)
+  const inTranslateMode = () => !document.getElementById("translate-view").hidden;
   ["dragenter", "dragover"].forEach((ev) =>
-    window.addEventListener(ev, (e) => { e.preventDefault(); els.dropzone.classList.add("is-drag"); }));
+    window.addEventListener(ev, (e) => {
+      e.preventDefault();
+      if (inTranslateMode() && els.viewer.hidden) els.dropzone.classList.add("is-drag");
+    }));
   ["dragleave", "drop"].forEach((ev) =>
     window.addEventListener(ev, (e) => {
+      if (!inTranslateMode()) return;
       e.preventDefault();
       if (ev === "drop" && e.dataTransfer?.files?.length) {
         els.dropzone.hidden = false; // ensure visible for state reset path
@@ -411,6 +417,23 @@ function wire() {
     els.viewer.hidden = true; els.toolbar.hidden = true; els.dropzone.hidden = false;
     state.pdfDoc = null; state.pages.clear();
   });
+
+  // mode tabs
+  const tabT = document.getElementById("tab-translate");
+  const tabE = document.getElementById("tab-edit");
+  const viewT = document.getElementById("translate-view");
+  const viewE = document.getElementById("edit-view");
+  function switchMode(mode) {
+    const isT = mode === "translate";
+    tabT.classList.toggle("is-active", isT);
+    tabE.classList.toggle("is-active", !isT);
+    tabT.setAttribute("aria-selected", isT);
+    tabE.setAttribute("aria-selected", !isT);
+    viewT.hidden = !isT;
+    viewE.hidden = isT;
+  }
+  tabT.addEventListener("click", () => switchMode("translate"));
+  tabE.addEventListener("click", () => switchMode("edit"));
 
   // settings open/close
   els.btnSettings.addEventListener("click", openSettings);
@@ -457,3 +480,4 @@ function invalidateTranslations() {
 syncSettingsUI();
 showEnvBanners();
 wire();
+initEditor();
