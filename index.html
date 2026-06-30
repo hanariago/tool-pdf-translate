@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>PDF 번역 · 원문 위치 그대로</title>
+  <meta name="description" content="브라우저에서 PDF를 열어 원문 위치 그대로 번역을 표시합니다. 서버 전송 없음." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- ===== App bar ===== -->
+  <header class="appbar">
+    <div class="appbar__brand">
+      <span class="appbar__logo" aria-hidden="true">📄</span>
+      <div class="appbar__titles">
+        <h1 class="appbar__title">PDF 번역</h1>
+        <p class="appbar__sub">원문 위치 그대로 · 서버 전송 없음</p>
+      </div>
+    </div>
+    <button id="btn-settings" class="iconbtn" title="설정" aria-label="설정">⚙️</button>
+  </header>
+
+  <!-- ===== Browser support / status banners ===== -->
+  <div id="banner-area" class="banners" aria-live="polite"></div>
+
+  <!-- ===== Toolbar ===== -->
+  <nav id="toolbar" class="toolbar" hidden>
+    <div class="toolbar__group">
+      <button id="btn-prev" class="iconbtn" title="이전 페이지" aria-label="이전 페이지">◀</button>
+      <span id="page-indicator" class="page-indicator">- / -</span>
+      <button id="btn-next" class="iconbtn" title="다음 페이지" aria-label="다음 페이지">▶</button>
+    </div>
+
+    <div class="toolbar__group seg" role="group" aria-label="보기 모드">
+      <button id="view-original" class="seg__btn is-active" data-mode="original">원문</button>
+      <button id="view-translated" class="seg__btn" data-mode="translated">번역</button>
+    </div>
+
+    <div class="toolbar__group">
+      <button id="btn-translate" class="btn btn--primary">번역하기</button>
+      <button id="btn-download" class="iconbtn" title="현재 페이지 PNG 저장" aria-label="PNG 저장">⬇️</button>
+      <button id="btn-new" class="iconbtn" title="새 PDF 열기" aria-label="새 PDF 열기">🗂️</button>
+    </div>
+  </nav>
+
+  <!-- ===== Page progress ===== -->
+  <div id="progress" class="progress" hidden>
+    <div class="progress__bar"><span id="progress-fill" class="progress__fill"></span></div>
+    <span id="progress-label" class="progress__label"></span>
+  </div>
+
+  <!-- ===== Main stage ===== -->
+  <main class="stage">
+    <!-- Empty / drop state -->
+    <section id="dropzone" class="dropzone">
+      <div class="dropzone__inner">
+        <div class="dropzone__icon" aria-hidden="true">📥</div>
+        <p class="dropzone__title">PDF를 끌어다 놓거나 선택하세요</p>
+        <p class="dropzone__hint">파일은 브라우저 안에서만 처리됩니다. 서버로 전송되지 않습니다.</p>
+        <label class="btn btn--primary">
+          PDF 선택
+          <input id="file-input" type="file" accept="application/pdf,.pdf" hidden />
+        </label>
+      </div>
+    </section>
+
+    <!-- Page viewport -->
+    <section id="viewer" class="viewer" hidden>
+      <div id="page-wrap" class="page-wrap">
+        <canvas id="page-canvas" class="page-canvas"></canvas>
+        <div id="overlay" class="overlay"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Settings drawer ===== -->
+  <div id="settings-backdrop" class="backdrop" hidden></div>
+  <aside id="settings" class="drawer" hidden aria-label="설정">
+    <div class="drawer__head">
+      <h2 class="drawer__title">설정</h2>
+      <button id="btn-settings-close" class="iconbtn" aria-label="닫기">✕</button>
+    </div>
+
+    <div class="drawer__body">
+      <!-- Languages -->
+      <fieldset class="field">
+        <legend class="field__legend">언어</legend>
+        <label class="field__row">
+          <span>원문 언어</span>
+          <select id="src-lang"></select>
+        </label>
+        <label class="field__row">
+          <span>번역 언어</span>
+          <select id="tgt-lang"></select>
+        </label>
+      </fieldset>
+
+      <!-- OCR -->
+      <fieldset class="field">
+        <legend class="field__legend">스캔본 OCR</legend>
+        <label class="field__row">
+          <span>OCR 인식 언어</span>
+          <select id="ocr-lang"></select>
+        </label>
+        <label class="field__row field__row--check">
+          <input id="ocr-auto" type="checkbox" checked />
+          <span>스캔본 감지 시 자동 OCR</span>
+        </label>
+        <p class="field__note">OCR은 이미지에서 글자를 추정하는 방식이라 100% 정확하지 않습니다. 표·작은 글씨·노이즈가 많은 스캔본은 오인식이 생길 수 있습니다.</p>
+      </fieldset>
+
+      <!-- LLM -->
+      <fieldset class="field">
+        <legend class="field__legend">LLM 보정 번역 (선택)</legend>
+        <label class="field__row">
+          <span>제공자</span>
+          <select id="llm-provider">
+            <option value="none">사용 안 함 (Chrome 내장 번역)</option>
+            <option value="claude">Claude API (Anthropic)</option>
+            <option value="openai">OpenAI API</option>
+          </select>
+        </label>
+        <label class="field__row field__row--stack" data-llm-only hidden>
+          <span>API 키</span>
+          <input id="llm-key" type="password" placeholder="sk-... / 본인 API 키" autocomplete="off" />
+        </label>
+        <label class="field__row field__row--stack" data-llm-only hidden>
+          <span>모델</span>
+          <input id="llm-model" type="text" placeholder="모델명" />
+        </label>
+        <label class="field__row field__row--check" data-llm-only hidden>
+          <input id="llm-correct" type="checkbox" checked />
+          <span>OCR 결과 문맥 보정</span>
+        </label>
+        <p class="field__note">API 키는 이 브라우저(localStorage)에만 저장되며 외부로 전송되지 않습니다. 번역 요청은 사용자가 입력한 키로 해당 제공자에게 직접 호출됩니다.</p>
+        <button id="btn-clear-key" class="btn btn--ghost" data-llm-only hidden>저장된 키 삭제</button>
+      </fieldset>
+    </div>
+  </aside>
+
+  <!-- ===== Scripts ===== -->
+  <!-- Tesseract (UMD global) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+  <!-- App (ESM) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
