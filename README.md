@@ -39,8 +39,21 @@ PDF를 브라우저에서 열어 **원문 위치 그대로** 번역을 표시하
 
 빌드 도구 없는 순수 정적 사이트(HTML/CSS/ESM). GitHub Pages로 그대로 배포됩니다.
 
+## 사용한 오픈소스 / 에셋
+
+- [pdf.js](https://github.com/mozilla/pdf.js) — Apache-2.0 (렌더링·텍스트 좌표 추출)
+- [Tesseract.js](https://github.com/naptha/tesseract.js) — Apache-2.0 (스캔본 OCR)
+- [pdf-lib](https://github.com/Hopding/pdf-lib) — MIT (PDF 편집: 합치기·분할·회전·삭제)
+- [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR) — SIL OFL 1.1 (Google Fonts)
+- Chrome Translator API / Claude · OpenAI API — 사용자 환경·본인 키로 호출
+
+라이브러리는 모두 CDN으로 로드됩니다. 자세한 고지는 [LICENSE](LICENSE) 참조.
+
 ## 개인정보
 
 - PDF·텍스트·이미지는 브라우저에서만 처리됩니다.
 - API 키는 이 브라우저(localStorage)에만 저장됩니다.
 - 번역 요청(LLM)은 사용자가 입력한 키로 해당 제공자에 직접 전송됩니다. 그 외 외부 전송은 없습니다.
+
+---
+Made by [Lena](https://x.com/thezenvoid) · License: MIT (외부 리소스 라이선스는 [LICENSE](LICENSE) 고지) · [🔧 다른 도구 모음](https://hanariago.github.io/tools-hub/)
